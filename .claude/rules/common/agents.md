@@ -10,12 +10,15 @@ Located in `~/.claude/agents/`:
 | architect | System design | Architectural decisions |
 | tdd-guide | Test-driven development | New features, bug fixes |
 | code-reviewer | Code review | After writing code |
+| typescript-reviewer | TypeScript-specific review | TypeScript/JavaScript projects |
 | security-reviewer | Security analysis | Before commits |
 | build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
+| e2e-runner | E2E Evaluator (read-only) | Pipeline verification phase |
+| database-reviewer | DB schema/query review | Database changes |
+| performance-optimizer | Performance analysis | Bottleneck investigation |
 | refactor-cleaner | Dead code cleanup | Code maintenance |
 | doc-updater | Documentation | Updating docs |
-| rust-reviewer | Rust code review | Rust projects |
+| harness-auditor | Audit harness setup | Verify ~/.claude/ config |
 
 ## Immediate Agent Usage
 
