@@ -3,7 +3,7 @@
 > Claude が書いた `Evaluator/Round-01.md` とは独立して、
 > 同じ Spec.md / Generator/Round-01.md を Codex が再評価する。
 >
-> 必ず冒頭に [`/EVALUATOR_PROMPT.md`](../../../EVALUATOR_PROMPT.md) を読み込むこと。
+> 必ず冒頭に [`/EVALUATOR_PROMPT.md`](../../../../EVALUATOR_PROMPT.md) を読み込むこと。
 
 ## 受け入れ条件ごとの判定
 

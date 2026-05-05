@@ -84,9 +84,21 @@ test -d "./missions" && find ./missions -maxdepth 2 -type d 2>/dev/null
 
 ### 2-4. Mission 構造評価（プロジェクト直下に missions/ がある場合）
 
-- 各ミッションに `Spec.md` / `Generator/` / `Evaluator/` が揃っているか
-- Evaluator レポートに証拠（ログ・スクショ・トレース）が含まれているか
-- BLOCKED が放置されていないか
+完了したミッションごとに以下を確認：
+
+- [ ] `Spec.md` が存在し、「検証環境」欄（dev server / baseURL / build / test / e2e / coverage）が埋まっているか
+- [ ] `Planner-Discussion/` に少なくとも `Round-01-Claude.md` がある
+  - Codexと併用する場合は `Round-01-Codex.md` / `Round-02-Claude.md` / `Round-02-Codex.md` の収束ラウンドが揃っているか
+- [ ] `Generator/` に `Round-XX.md` 形式の実装報告がある
+- [ ] `Evaluator/Round-XX.md` に各受け入れ条件ごとの **PASS/FAIL/BLOCKED + 証拠** が書かれている
+- [ ] Codex併用時は `Evaluator/Discussion/Round-XX-Codex.md` の独立検証がある
+- [ ] `Assets/` にスクショ・トレース・ログのいずれかが保存されている
+- [ ] `ChangedFiles-XX.txt` に各ラウンドの変更ファイル一覧がある
+- [ ] 完了ミッションには `Summary.md` があり、ステータス・残課題・教訓が記入されている
+- [ ] BLOCKED が放置されていないか（環境を整えて再評価されているか）
+
+ミッション間の整合性も確認：
+- Spec.md の検証環境欄に書かれたコマンドが、Evaluatorレポートで実際に実行された形跡があるか
 
 ---
 

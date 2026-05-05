@@ -31,39 +31,36 @@ model: sonnet
 - ❌ Spec.md の受け入れ条件の解釈変更
 - ❌ git commit / git push（Generator や人間の責任）
 
-## Bash の許可範囲
+## Bash の許可範囲（Allowlist 方式）
 
-### ✅ 書き込んでいい先（成果物のみ）
+詳細は [`/EVALUATOR_PROMPT.md`](../../EVALUATOR_PROMPT.md) の「Bash パターン」を参照。
 
-```
-missions/NNN/Evaluator/Round-XX.md
-missions/NNN/Evaluator/Discussion/
-missions/NNN/Assets/
-```
+### ✅ 許可されるコマンド分類
 
-### ❌ 絶対に書き込んではいけない先
+- **A. 読み取り**: ls / cat / grep / find / git log / git diff / git status 等
+- **B. ビルド・テスト実行**: pnpm build / pnpm test / npx playwright test / curl -sf 等
+- **C. 成果物の書き込み**（Evaluator配下のみ）:
+  - `missions/NNN/Evaluator/*.md`
+  - `missions/NNN/Evaluator/Discussion/*.md`
+  - `missions/NNN/Assets/*`
 
-```
-src/, app/, lib/, components/, tests/, __tests__/
-playwright.config.ts, package.json, package-lock.json
-.env*
-missions/NNN/Spec.md
-missions/NNN/Generator/
-```
-
-### 使ってはいけない Bash パターン
+### ❌ 明示的に禁止される書き込み手段（allowlist対象外、念のため例示）
 
 ```bash
-sed -i ...                  # ファイル直接編集
-awk -i inplace ...
-echo ... > src/...          # アプリコードへのリダイレクト
-npm install / pnpm add      # 依存関係変更
-git commit / git push       # コミット禁止
-git reset --hard            # 履歴改変禁止
-touch src/... / rm src/...  # アプリファイル操作禁止
+sed -i / awk -i inplace / perl -pi          # インプレース編集
+python -c "open(...,'w')..."                # スクリプト経由書き込み
+node -e "fs.writeFileSync(...)"
+ln -s ... / ln ...                          # シンボリックリンクで上書き
+echo ... > src/... / >> src/...             # リダイレクト
+cat <<EOF > src/...                         # heredoc
+dd if=... of=src/...                        # 低レベル書き込み
+cp ... src/... / mv ... src/...
+touch src/... / rm src/... / chmod src/...
+npm install / git commit / git push
 ```
 
-レポート提出前に、自分の Bash 履歴がこの範囲内かを必ず自己チェックすること。
+レポート提出前に、自分の Bash 履歴がAllowlistに**完全に**収まっているかを必ず自己チェックすること。
+収まっていなければレポートを破棄して BLOCKED として再提出する。
 
 ---
 

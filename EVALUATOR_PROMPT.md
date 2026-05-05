@@ -57,73 +57,93 @@ quarantine の判断は Generator の責務であり、Evaluator はそれを記
 
 ### 6. コードを書き換えるな（Bash経由でも禁止）
 
-Evaluator が触れていいのは **自分のレポートと検証成果物のみ** です。
+**Allowlist方式**: 以下に列挙されたコマンドパターン**のみ**実行可能。
+それ以外は全て禁止です。「禁止リストに無いから OK」という発想は禁止します。
 
-#### ✅ 許可される書き込み先
+#### ✅ 許可されるコマンド（このリストにあるものだけ）
 
-```
-missions/NNN/Evaluator/Round-XX.md      # 検証レポート本体
-missions/NNN/Evaluator/Discussion/      # ラウンド議論
-missions/NNN/Assets/                    # スクショ・トレース・ログ
-```
-
-#### ❌ 絶対に書き込んではいけない先
-
-```
-src/, app/, lib/, components/           # アプリケーションコード
-tests/, __tests__/, spec/               # テストコード
-playwright.config.ts                    # 設定ファイル
-package.json, package-lock.json         # 依存関係
-.env*                                   # 環境変数
-missions/NNN/Spec.md                    # 仕様書
-missions/NNN/Generator/                 # Generator成果物
-```
-
-#### 使ってはいけない Bash パターン
-
+**A. 読み取り専用の探索**
 ```bash
-# ❌ 編集系
-sed -i ...
-awk -i inplace ...
-echo ... > src/...
-cat ... > tests/...
-tee src/...
-
-# ❌ 依存関係変更
-npm install
-pnpm add
-yarn add
-
-# ❌ git 操作（Generatorが責任を持つ）
-git commit
-git push
-git reset --hard
-git checkout -- ...
-
-# ❌ ファイル作成・削除（成果物以外）
-touch src/...
-rm src/...
-mv tests/... ...
+ls / cat / head / tail / less / grep / rg / find / file / wc / stat
+git status / git log / git diff / git show / git ls-files / git blame
 ```
 
-#### 使っていい Bash パターン
-
+**B. ビルド・テスト実行（生成物のみ、ソース改変なし）**
 ```bash
-# ✅ Read系
-ls, cat, head, tail, grep, find, git log, git diff, git status
-
-# ✅ ビルド・テスト実行（生成のみ、コード変更なし）
-pnpm build
-pnpm test
+pnpm build / npm run build / yarn build / cargo build
+pnpm test / npm test / pytest / cargo test
+pnpm tsc --noEmit / npx tsc --noEmit
+pnpm lint / npm run lint / pnpm eslint --no-fix
 npx playwright test --trace on
-curl -sf $BASE_URL
-
-# ✅ 成果物の書き込み（Evaluator配下のみ）
-echo "..." > missions/NNN/Evaluator/Round-01.md
-cp screenshot.png missions/NNN/Assets/
+npx playwright show-report
+curl -sf $BASE_URL/ / curl -I $BASE_URL/
 ```
 
-レポート提出前に「自分が実行したBashコマンドが上記の許可範囲内に収まっているか」を必ず確認すること。
+**C. 成果物の書き込み（Evaluator配下のみ）**
+```bash
+# 許可される書き込み先パスは以下の3つのみ
+echo "..." > missions/NNN/Evaluator/Round-XX.md
+echo "..." >> missions/NNN/Evaluator/Round-XX.md
+cat > missions/NNN/Evaluator/Discussion/Round-XX-Codex.md
+cp screenshot.png missions/NNN/Assets/
+mv trace.zip missions/NNN/Assets/
+```
+
+許可される書き込み先パス:
+- `missions/NNN/Evaluator/*.md`
+- `missions/NNN/Evaluator/Discussion/*.md`
+- `missions/NNN/Assets/*`
+
+これら以外への書き込みは**全て禁止**です。
+
+#### ❌ 明示的に禁止されるパターン（allowlistの補強）
+
+以下は allowlist にも当然含まれませんが、見逃しやすいので明記：
+
+```bash
+# リダイレクト・追記による編集
+echo ... > src/...                  # ❌ Evaluator成果物以外への >
+... >> src/...                      # ❌ Evaluator成果物以外への >>
+tee src/... / tee -a src/...        # ❌
+cat <<EOF > src/...                 # ❌ heredoc
+
+# インプレース編集
+sed -i ... / sed -E -i ...
+awk -i inplace ...
+perl -pi -e ... / perl -i -pe ...
+
+# スクリプト言語による編集
+python -c "open('src/foo','w').write(...)"
+python3 -c "...write..."
+node -e "require('fs').writeFileSync('src/foo',...)"
+node -e "fs.appendFileSync(...)"
+ruby -e "File.write(...)"
+
+# シンボリックリンク・ハードリンクで成果物パスをすり替え
+ln -s ... missions/NNN/Evaluator/...
+ln ... missions/NNN/Evaluator/...
+
+# 低レベル書き込み・コピー
+dd if=... of=src/...
+cp ... src/... / cp ... tests/...
+mv ... src/... / mv ... tests/...
+rsync ... src/...
+
+# ファイル作成・削除
+touch src/... / touch tests/...
+rm src/... / rm tests/...
+rm -rf ... / rmdir ...
+
+# 依存関係・git改変
+npm install / pnpm add / yarn add
+git commit / git push / git reset --hard / git checkout -- ...
+
+# 権限変更（編集の伏線）
+chmod ... src/... / chown ...
+```
+
+レポート提出前に「自分が実行したBashコマンドが上記Allowlistに**完全に**収まっているか」を必ず確認すること。
+収まっていなければレポートを破棄して BLOCKED として再提出する。
 
 ---
 

@@ -88,9 +88,16 @@ GitHubの公開ハンドル（リポジトリのowner名）はLICENSE/clone URL�
 
 ### C-1: 必須ファイル
 - LICENSE, README, .gitignore は揃っているか
-- WORKFLOW.md, EVALUATOR_PROMPT.md, SEVERITY.md が揃っているか
-- missions/000-template/ に Spec.md / Planner-Discussion/ / Generator/ / Evaluator/ / Assets/ が揃っているか
-- ドキュメント間のリンクが切れていないか
+- WORKFLOW.md, EVALUATOR_PROMPT.md, SEVERITY.md, AUDIT_PROMPT.md が揃っているか
+- missions/000-template/ 配下：
+  - Spec.md（検証環境欄を含む）
+  - Planner-Discussion/Round-01-Claude.md / Round-01-Codex.md / Round-02-Claude.md / Round-02-Codex.md
+  - Generator/Round-01.md
+  - Evaluator/Round-01.md / Discussion/Round-01-Codex.md
+  - Assets/
+  - ChangedFiles-01.txt / Summary.md
+- playwright-template/ 配下：README / playwright.config.ts / specs/ / tests/e2e/seed.spec.ts / tests/e2e/login.spec.ts
+- ドキュメント間の相対リンクが全て解決可能か（リンク切れチェック）
 
 ### C-2: 整合性
 - agents/ の実ファイルと rules/common/agents.md の記述に矛盾がないか

@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';const blocks=[/git\\s+(commit|push)\\b[^|;&]*--no-verify\\b/,/git\\s+push\\b(?![^|;&]*--force-with-lease)[^|;&]*\\s(-f|--force)\\b/,/\\brm\\s+-rf\\s+\\/(\\s|$)/,/\\bsudo\\s+rm\\s+-rf\\b/];for(const re of blocks){if(re.test(cmd)){console.error('[Hook] BLOCKED: dangerous command: '+cmd);process.exit(2)}}console.log(d)})\""
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';const blocks=[/git\\s+(commit|push)\\b[^|;&]*--no-verify\\b/,/git\\s+push\\b[^|;&]*\\s(--force(?!-)|-f)(\\s|$)/,/\\brm\\s+-rf\\s+\\/(\\s|$)/,/\\bsudo\\s+rm\\s+-rf\\b/];for(const re of blocks){if(re.test(cmd)){console.error('[Hook] BLOCKED: dangerous command: '+cmd);process.exit(2)}}console.log(d)})\""
           }
         ],
         "description": "git --no-verify / git push --force / rm -rf / / sudo rm -rf をブロック（--force-with-lease は許可）"
