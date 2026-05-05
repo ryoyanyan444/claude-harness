@@ -27,7 +27,9 @@ missions/
     ├── Evaluator/
     │   ├── Round-01.md               # 検証結果＋証拠（Claude）
     │   └── Discussion/
-    │       └── Round-01-Codex.md     # Codex独立検証
+    │       ├── Round-01-Codex.md     # Codex独立検証
+    │       ├── Round-02-Claude.md    # Codex差分を再調査
+    │       └── Round-02-Codex.md     # 収束判定（3ラウンド停止条件含む）
     ├── Assets/                       # スクショ・トレース等
     ├── ChangedFiles-01.txt           # 各ラウンドの変更ファイル一覧
     └── Summary.md                    # ミッション完了時の総括

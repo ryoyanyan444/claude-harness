@@ -41,9 +41,10 @@ test -d ~/.claude && cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d_%H%M%S)
 `-n` で既存ファイルを上書きしません：
 
 ```bash
-mkdir -p ~/.claude/agents ~/.claude/rules
+mkdir -p ~/.claude/agents ~/.claude/rules ~/.claude/scripts
 cp -rn .claude/agents/. ~/.claude/agents/
 cp -rn .claude/rules/. ~/.claude/rules/
+cp -rn .claude/scripts/. ~/.claude/scripts/
 ```
 
 同名ファイルがある場合は手動でマージしてください。
@@ -69,6 +70,14 @@ Use the harness-auditor agent to audit my ~/.claude/ setup
 ```
 
 監査レポートが返ってくればセットアップ完了。
+
+### 7. Evaluator hook の動作確認（任意）
+
+```bash
+node ~/.claude/scripts/evaluator-bash-guard.test.js
+```
+
+64テスト全パスならEvaluatorのBash allowlistが正しく動作します。
 
 ### ロールバック手順
 
@@ -150,6 +159,9 @@ claude-harness/
 └── .claude/
     ├── agents/              # 13個のサブエージェント
     ├── rules/               # common/ + web/
+    ├── scripts/
+    │   ├── evaluator-bash-guard.js     # Evaluator専用 Bash allowlist
+    │   └── evaluator-bash-guard.test.js # 64テスト
     └── settings.json        # hooks テンプレート
 ```
 

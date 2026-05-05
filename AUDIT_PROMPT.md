@@ -93,7 +93,9 @@ GitHubの公開ハンドル（リポジトリのowner名）はLICENSE/clone URL�
   - Spec.md（検証環境欄を含む）
   - Planner-Discussion/Round-01-Claude.md / Round-01-Codex.md / Round-02-Claude.md / Round-02-Codex.md
   - Generator/Round-01.md
-  - Evaluator/Round-01.md / Discussion/Round-01-Codex.md
+  - Evaluator/Round-01.md
+  - Evaluator/Discussion/Round-01-Codex.md / Round-02-Claude.md / Round-02-Codex.md
+  - Assets/.gitkeep
   - Assets/
   - ChangedFiles-01.txt / Summary.md
 - playwright-template/ 配下：README / playwright.config.ts / specs/ / tests/e2e/seed.spec.ts / tests/e2e/login.spec.ts

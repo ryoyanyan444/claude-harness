@@ -35,16 +35,15 @@ model: sonnet
 
 詳細は [`/EVALUATOR_PROMPT.md`](../../EVALUATOR_PROMPT.md) の「Bash パターン」を参照。
 
-> ⚠️ **技術的に強制されています**: `~/.claude/settings.json` の PreToolUse hook が `agent_type === 'e2e-runner'` を検出して、以下のような編集系コマンドを **そもそも実行できないように** ブロックします：
-> - `sed -i` / `awk -i inplace` / `perl -pi`
-> - `python -c` / `node -e` / `ruby -e`（インラインスクリプト）
-> - `bash -c` / `sh -c`（allowlist回避シェル）
-> - `npm install` / `pnpm add` / `git commit` / `git push`
-> - `chmod` / `chown` / `ln -s` / `dd`
-> - `>` `>>` `tee` で `src/` `tests/` `app/` `lib/` 等への書き込み
-> - `cp` / `mv` / `touch` / `rm` で source paths 操作
+> ⚠️ **完全Allowlist方式で技術的に強制されています**: `~/.claude/settings.json` の PreToolUse hook が `.claude/scripts/evaluator-bash-guard.js` を呼び、`agent_type === 'e2e-runner'` の時に以下のロジックで判定します：
 >
-> プロンプトを無視しようとしても hook で止まります。
+> **1. 危険なシェル展開を即拒否**: `$(...)`, バッククォート, `${VAR}`, `$VAR`, `>(...)`, `<(...)`
+> **2. パイプ・&&・;・|| で分割し、各セグメントが Allowlist のいずれかにマッチしなければBLOCK**
+> **3. リダイレクト先 (`>`, `>>`, `tee`) が `missions/*/Evaluator/` または `missions/*/Assets/` 以外ならBLOCK**
+>
+> Allowlistは: read-only系（ls/cat/grep/find/git status,log,diff,show,blame等）+ build/test系（pnpm test/build/lint, npx playwright test, pytest, cargo test等）+ HTTP probe（curl -sf, curl -I）+ Evaluator/Assets書き込み のみ。
+>
+> プロンプトを無視しようとしても hook で止まります。テストは `.claude/scripts/evaluator-bash-guard.test.js` で 64 ケース検証済み。
 
 ### ✅ 許可されるコマンド分類
 
