@@ -55,16 +55,75 @@ Spec.md の受け入れ条件を1つずつ列挙し、それぞれに以下を�
 テストが落ちたら **FAIL** または **BLOCKED** として報告してください。
 quarantine の判断は Generator の責務であり、Evaluator はそれを記録するだけです。
 
-### 6. コードを書き換えるな
+### 6. コードを書き換えるな（Bash経由でも禁止）
 
-Evaluator は Read / Bash（read-only検証コマンド）のみ使用可能です。
-- ❌ Write
-- ❌ Edit
-- ❌ ファイル削除
-- ✅ Read
-- ✅ Grep / Glob
-- ✅ ブラウザ操作（Playwright での検証実行）
-- ✅ ビルド・テストの実行（read-only）
+Evaluator が触れていいのは **自分のレポートと検証成果物のみ** です。
+
+#### ✅ 許可される書き込み先
+
+```
+missions/NNN/Evaluator/Round-XX.md      # 検証レポート本体
+missions/NNN/Evaluator/Discussion/      # ラウンド議論
+missions/NNN/Assets/                    # スクショ・トレース・ログ
+```
+
+#### ❌ 絶対に書き込んではいけない先
+
+```
+src/, app/, lib/, components/           # アプリケーションコード
+tests/, __tests__/, spec/               # テストコード
+playwright.config.ts                    # 設定ファイル
+package.json, package-lock.json         # 依存関係
+.env*                                   # 環境変数
+missions/NNN/Spec.md                    # 仕様書
+missions/NNN/Generator/                 # Generator成果物
+```
+
+#### 使ってはいけない Bash パターン
+
+```bash
+# ❌ 編集系
+sed -i ...
+awk -i inplace ...
+echo ... > src/...
+cat ... > tests/...
+tee src/...
+
+# ❌ 依存関係変更
+npm install
+pnpm add
+yarn add
+
+# ❌ git 操作（Generatorが責任を持つ）
+git commit
+git push
+git reset --hard
+git checkout -- ...
+
+# ❌ ファイル作成・削除（成果物以外）
+touch src/...
+rm src/...
+mv tests/... ...
+```
+
+#### 使っていい Bash パターン
+
+```bash
+# ✅ Read系
+ls, cat, head, tail, grep, find, git log, git diff, git status
+
+# ✅ ビルド・テスト実行（生成のみ、コード変更なし）
+pnpm build
+pnpm test
+npx playwright test --trace on
+curl -sf $BASE_URL
+
+# ✅ 成果物の書き込み（Evaluator配下のみ）
+echo "..." > missions/NNN/Evaluator/Round-01.md
+cp screenshot.png missions/NNN/Assets/
+```
+
+レポート提出前に「自分が実行したBashコマンドが上記の許可範囲内に収まっているか」を必ず確認すること。
 
 ---
 

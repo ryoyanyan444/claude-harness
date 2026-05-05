@@ -1,0 +1,9 @@
+# Generator Round-01 で変更されたファイル一覧
+# 各ラウンド毎に ChangedFiles-XX.txt として保存する。
+# 生成方法: git diff --name-status main...HEAD > missions/NNN/ChangedFiles-01.txt
+
+# 例:
+# A   src/auth/login.ts
+# M   src/router.ts
+# A   tests/e2e/login.spec.ts
+# D   src/auth/legacy.ts

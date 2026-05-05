@@ -122,16 +122,28 @@ Use the harness-auditor agent to audit my ~/.claude/ setup
 ```
 claude-harness/
 ├── WORKFLOW.md              # 開発パイプラインの手順書
-├── EVALUATOR_PROMPT.md      # 硬化Evaluatorプロンプト
+├── EVALUATOR_PROMPT.md      # 硬化Evaluatorプロンプト（Bash許可範囲も含む）
 ├── SEVERITY.md              # 重大度判定基準
 ├── AUDIT_PROMPT.md          # リポジトリ監査用プロンプト
 ├── missions/
 │   └── 000-template/        # ミッション雛形
-│       ├── Spec.md
+│       ├── Spec.md          # 検証環境欄を含む
 │       ├── Planner-Discussion/
+│       │   ├── Round-01-Claude.md
+│       │   ├── Round-01-Codex.md
+│       │   ├── Round-02-Claude.md
+│       │   └── Round-02-Codex.md
 │       ├── Generator/
 │       ├── Evaluator/
-│       └── Assets/
+│       │   ├── Round-01.md
+│       │   └── Discussion/  # Codex独立検証
+│       ├── Assets/
+│       ├── ChangedFiles-01.txt
+│       └── Summary.md
+├── playwright-template/     # Playwright任意テンプレート
+│   ├── playwright.config.ts
+│   ├── specs/
+│   └── tests/e2e/seed.spec.ts
 └── .claude/
     ├── agents/              # 13個のサブエージェント
     ├── rules/               # common/ + web/

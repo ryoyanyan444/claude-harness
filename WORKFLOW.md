@@ -19,12 +19,18 @@ missions/
     ├── Spec.md                       # Plannerの最終成果物（ユーザー承認必須）
     ├── Planner-Discussion/
     │   ├── Round-01-Claude.md
-    │   └── Round-02-Claude.md
+    │   ├── Round-01-Codex.md         # Codex独立調査（Codex不在ならスキップ可）
+    │   ├── Round-02-Claude.md        # Codex差分を再調査
+    │   └── Round-02-Codex.md         # 収束判定
     ├── Generator/
     │   └── Round-01.md               # 実装報告
     ├── Evaluator/
-    │   └── Round-01.md               # 検証結果＋証拠
-    └── Assets/                       # スクショ・トレース等
+    │   ├── Round-01.md               # 検証結果＋証拠（Claude）
+    │   └── Discussion/
+    │       └── Round-01-Codex.md     # Codex独立検証
+    ├── Assets/                       # スクショ・トレース等
+    ├── ChangedFiles-01.txt           # 各ラウンドの変更ファイル一覧
+    └── Summary.md                    # ミッション完了時の総括
 ```
 
 新規ミッション開始時は [`missions/000-template/`](./missions/000-template/) を複製してください。
@@ -85,15 +91,18 @@ missions/
 
 ### 手順
 
-1. dev server を起動: `npm run dev`
+1. **Spec.md の「検証環境」欄に書かれたコマンドで** dev server を起動
+   （プロジェクトに固有なので Spec.md を参照）
 2. Claude Code で：
    ```
    Use the e2e-runner agent. Follow EVALUATOR_PROMPT.md strictly.
-   Validate missions/NNN-機能名/ against Spec.md acceptance criteria.
+   Read the verification commands from missions/NNN-機能名/Spec.md.
+   Validate against Spec.md acceptance criteria.
    Save report to missions/NNN-機能名/Evaluator/Round-01.md
    ```
-3. Evaluator は **Read のみ**。コードを書き換えないし、テストを修正しない
+3. Evaluator は **Read + 限定された Bash のみ**（[`EVALUATOR_PROMPT.md`](./EVALUATOR_PROMPT.md) のBash許可範囲参照）
 4. 各受け入れ条件に **証拠（ログ・スクショ・grep結果）** が必須
+5. （任意）Codex がある場合: `Evaluator/Discussion/Round-01-Codex.md` で独立検証→差分があれば収束ラウンド
 
 ### 判定（[SEVERITY.md](./SEVERITY.md) 参照）
 
@@ -105,7 +114,10 @@ missions/
 
 ### Evaluator の成果物
 - `Evaluator/Round-01.md` — 受け入れ条件ごとの PASS/FAIL/BLOCKED ＋証拠
+- `Evaluator/Discussion/Round-01-Codex.md` — Codex独立検証（任意）
 - `Assets/` — スクショ・Playwright トレース・実行ログ
+- `ChangedFiles-XX.txt` — 各ラウンドの変更ファイル一覧
+- `Summary.md` — ミッション完了時の総括
 
 ---
 
@@ -138,30 +150,19 @@ Evaluator は Playwright で実機検証します。
 npx playwright init-agents --loop=claude
 ```
 
-これで `specs/`（テスト計画）と `tests/`（実テスト）が自動生成されます。
+これで `specs/`（テスト計画）と `tests/`（実テスト）と Claude向け instructions が自動生成されます。
 
 ### 手動セットアップ
 
+[`playwright-template/`](./playwright-template/) に最小構成があります：
+
 ```bash
+cp -rn playwright-template/. ./
 npm install -D @playwright/test
 npx playwright install
 ```
 
-`playwright.config.ts` 最低限：
-
-```ts
-import { defineConfig } from '@playwright/test'
-
-export default defineConfig({
-  testDir: './tests/e2e',
-  use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
-    screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-    trace: 'on-first-retry',
-  },
-})
-```
+Spec.md の「検証環境」欄に baseURL とコマンドを書いてください。
 
 ---
 

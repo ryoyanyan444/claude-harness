@@ -20,10 +20,60 @@
 - セキュリティ: [例「CSRF トークン必須」]
 - アクセシビリティ: [例「キーボードのみで完結」]
 
+---
+
+## 検証環境（Evaluator が読む欄・必須）
+
+Evaluator はここに書かれたコマンド以外は実行しません。各プロジェクトのツールに合わせて埋めてください。
+
+### dev server 起動コマンド
+```bash
+# 例: pnpm dev / npm run dev / cargo run / python manage.py runserver
+[ここに実コマンド]
+```
+
+### baseURL
+```
+# 例: http://localhost:3000 / http://localhost:8080
+[ここにURL]
+```
+
+### ビルドコマンド
+```bash
+# 例: pnpm build / npm run build / cargo build
+[ここに実コマンド]
+```
+
+### テスト実行コマンド
+```bash
+# 例: pnpm test / npm test / pytest
+[ここに実コマンド]
+```
+
+### E2Eテスト実行コマンド
+```bash
+# 例: npx playwright test / npx playwright test --trace on
+[ここに実コマンド]
+```
+
+### カバレッジ計測コマンド（testing.md で80%必須）
+```bash
+# 例: pnpm test --coverage / npm run coverage / pytest --cov
+[ここに実コマンド]
+```
+
+### seed/setup コマンド（必要な場合）
+```bash
+# 例: docker-compose up -d / pnpm db:seed
+[必要なら記入、不要なら "なし"]
+```
+
+---
+
 ## 検証手段
 - [ ] ユニットテスト（対象モジュール）
 - [ ] 統合テスト（API endpoint）
-- [ ] E2E テスト（Playwright で `/login` フロー）
+- [ ] E2E テスト（Playwright で `[フロー名]`）
 - [ ] 手動検証（[必要なら]）
 
 ## 関連ファイル
