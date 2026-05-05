@@ -1,0 +1,13 @@
+projects/
+memory/
+sessions/
+paste-cache/
+todos/
+telemetry/
+backups/
+shell-snapshots/
+history.jsonl
+*.log
+settings.local.json
+mcp-configs/
+.env*
