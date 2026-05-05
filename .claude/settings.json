@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "テンプレートです。各 hook の command をプロジェクトの実ツールに差し替えてください。詳細は web/hooks.md 参照。",
+  "_comment": "テンプレートです。各 hook の command をプロジェクトの実ツールに差し替えてください。Evaluator用Bash制限はagent_typeをClaude Codeが渡してくれるので技術的に強制されます。",
   "hooks": {
     "PreToolUse": [
       {
@@ -8,10 +8,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';const blocks=[/git\\s+(commit|push)\\b[^|;&]*--no-verify\\b/,/git\\s+push\\b[^|;&]*\\s(--force(?!-)|-f)(\\s|$)/,/\\brm\\s+-rf\\s+\\/(\\s|$)/,/\\bsudo\\s+rm\\s+-rf\\b/];for(const re of blocks){if(re.test(cmd)){console.error('[Hook] BLOCKED: dangerous command: '+cmd);process.exit(2)}}console.log(d)})\""
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';const agent=i.agent_type||'';const globalBlocks=[/git\\s+(commit|push)\\b[^|;&]*--no-verify\\b/,/git\\s+push\\b[^|;&]*\\s(--force(?!-)|-f)(\\s|$)/,/\\brm\\s+-rf\\s+\\/(\\s|$)/,/\\bsudo\\s+rm\\s+-rf\\b/];for(const re of globalBlocks){if(re.test(cmd)){console.error('[Hook] BLOCKED dangerous command: '+cmd);process.exit(2)}}if(agent==='e2e-runner'){const evalBlocks=[/\\b(sed|gsed)\\s+[^|;&]*-i\\b/,/\\bawk\\s+[^|;&]*-i\\s+inplace\\b/,/\\bperl\\s+[^|;&]*-pi?\\b/,/\\b(python|python3|node|deno|ruby|perl)\\s+-[ec]\\b/,/\\b(bash|sh|zsh|dash|ksh|fish)\\s+-c\\b/,/\\bln\\s+-s/,/\\bdd\\s+(?:if|of)=/,/\\b(npm|pnpm|yarn)\\s+(install|add|remove|i|rm)\\b/,/\\bgit\\s+(commit|push|reset|checkout\\s+--|rm)\\b/,/\\b(chmod|chown)\\s/,/>>?\\s*(\\.\\.?\\/)*(src|tests|app|lib|components|spec|__tests__|features|public|pages|build|dist)\\//,/>>?\\s*(\\.\\.?\\/)*(playwright\\.config|package\\.json|tsconfig|vite\\.config|next\\.config|webpack\\.config|babel\\.config|tailwind\\.config|\\.env)/,/\\btee\\s+(-a\\s+)?(\\.\\.?\\/)*(src|tests|app|lib|components|spec|__tests__)\\//,/\\b(touch|rm)\\s+(-[a-z]*\\s+)?(\\.\\.?\\/)*(src|tests|app|lib|components|spec|__tests__)\\//,/\\b(cp|mv)\\s+[^|;&]*\\s+(\\.\\.?\\/)*(src|tests|app|lib|components|spec|__tests__)\\//];for(const re of evalBlocks){if(re.test(cmd)){console.error('[Hook] Evaluator (e2e-runner) BLOCKED: '+cmd+' — Evaluator must not modify code/deps/git. See EVALUATOR_PROMPT.md');process.exit(2)}}}console.log(d)})\""
           }
         ],
-        "description": "git --no-verify / git push --force / rm -rf / / sudo rm -rf をブロック（--force-with-lease は許可）"
+        "description": "全エージェント: --no-verify / git push --force / rm -rf / / sudo rm -rf をブロック。e2e-runner サブエージェント時はさらに sed -i / perl -pi / python -c / node -e / bash -c / npm install / chmod / src・tests等への書き込みをブロック"
       }
     ],
     "PostToolUse": [

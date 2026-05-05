@@ -140,10 +140,13 @@ claude-harness/
 │       ├── Assets/
 │       ├── ChangedFiles-01.txt
 │       └── Summary.md
-├── playwright-template/     # Playwright任意テンプレート
+├── playwright-template/     # Playwright任意テンプレート（コピー用）
+│   ├── README.md
 │   ├── playwright.config.ts
-│   ├── specs/
-│   └── tests/e2e/seed.spec.ts
+│   ├── specs/login.spec.md
+│   └── tests/e2e/
+│       ├── seed.spec.ts
+│       └── login.spec.ts
 └── .claude/
     ├── agents/              # 13個のサブエージェント
     ├── rules/               # common/ + web/

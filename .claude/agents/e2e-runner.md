@@ -35,6 +35,17 @@ model: sonnet
 
 詳細は [`/EVALUATOR_PROMPT.md`](../../EVALUATOR_PROMPT.md) の「Bash パターン」を参照。
 
+> ⚠️ **技術的に強制されています**: `~/.claude/settings.json` の PreToolUse hook が `agent_type === 'e2e-runner'` を検出して、以下のような編集系コマンドを **そもそも実行できないように** ブロックします：
+> - `sed -i` / `awk -i inplace` / `perl -pi`
+> - `python -c` / `node -e` / `ruby -e`（インラインスクリプト）
+> - `bash -c` / `sh -c`（allowlist回避シェル）
+> - `npm install` / `pnpm add` / `git commit` / `git push`
+> - `chmod` / `chown` / `ln -s` / `dd`
+> - `>` `>>` `tee` で `src/` `tests/` `app/` `lib/` 等への書き込み
+> - `cp` / `mv` / `touch` / `rm` で source paths 操作
+>
+> プロンプトを無視しようとしても hook で止まります。
+
 ### ✅ 許可されるコマンド分類
 
 - **A. 読み取り**: ls / cat / grep / find / git log / git diff / git status 等
